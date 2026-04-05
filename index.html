@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
+ 
 <!-- ═══════════════ HEADER ═══════════════ -->
 <header class="app-header">
   <div class="header-left">
@@ -44,7 +44,7 @@
     </button>
   </div>
 </header>
-
+ 
 <!-- ═══════════════ BOARD VIEW ═══════════════ -->
 <div id="view-board" class="view active">
   <div class="board-title-bar">
@@ -53,7 +53,7 @@
       <span class="board-meta" id="board-meta-count"></span>
     </div>
   </div>
-
+ 
   <div class="board-scroll">
     <div class="board-columns" id="board-columns">
       <!-- Columns injected by JS -->
@@ -63,12 +63,12 @@
     </button>
   </div>
 </div>
-
+ 
 <!-- ═══════════════ DASHBOARD VIEW ═══════════════ -->
 <div id="view-dashboard" class="view">
   <div class="dashboard-wrap">
     <h2 class="section-title">Vue d'ensemble</h2>
-
+ 
     <div class="kpi-row">
       <div class="kpi-card" style="--accent:#0079BF">
         <div class="kpi-num" id="kpi-actifs">—</div>
@@ -87,7 +87,7 @@
         <div class="kpi-label">Tâches terminées</div>
       </div>
     </div>
-
+ 
     <div class="dash-grid">
       <div class="dash-panel">
         <h3 class="panel-title">🔴 Tâches en retard</h3>
@@ -108,7 +108,7 @@
     </div>
   </div>
 </div>
-
+ 
 <!-- ═══════════════ PLANNING VIEW ═══════════════ -->
 <div id="view-planning" class="view">
   <div class="planning-wrap">
@@ -131,7 +131,7 @@
     </div>
   </div>
 </div>
-
+ 
 <!-- ═══════════════ MODAL TÂCHE ═══════════════ -->
 <div class="modal-overlay" id="modal-overlay" onclick="closeModal()"></div>
 <div class="modal" id="task-modal">
@@ -142,7 +142,7 @@
     </div>
     <button class="modal-close" onclick="closeModal()">✕</button>
   </div>
-
+ 
   <div class="modal-body">
     <div class="modal-col-main">
       <div class="modal-field">
@@ -154,7 +154,7 @@
         <textarea id="modal-comment" rows="2" placeholder="Commentaire interne..."></textarea>
       </div>
     </div>
-
+ 
     <div class="modal-col-side">
       <div class="modal-field">
         <label>Client</label>
@@ -211,7 +211,7 @@
         <label>Date d'échéance</label>
         <input type="date" id="modal-due" />
       </div>
-
+ 
       <div class="modal-actions">
         <button class="btn-save" onclick="saveTask()">Enregistrer</button>
         <button class="btn-delete" id="modal-delete-btn" onclick="deleteTask()" style="display:none">Supprimer</button>
@@ -219,7 +219,7 @@
     </div>
   </div>
 </div>
-
+ 
 <!-- ═══════════════ MODAL PROJET ═══════════════ -->
 <div class="modal" id="project-modal" style="max-width:460px">
   <div class="modal-header">
@@ -261,7 +261,7 @@
     </div>
   </div>
 </div>
-
+ 
 <script src="app.js"></script>
 </body>
 </html>
