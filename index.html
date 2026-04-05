@@ -2,38 +2,281 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AgenceBoard</title>
-  <link rel="stylesheet" href="style.css"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agence Comm — Board Projets</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
+ 
+<!-- ═══════════════ HEADER ═══════════════ -->
 <header class="app-header">
-  <h1>AgenceBoard</h1>
-  <button onclick="openModal()">+ Nouvelle tâche</button>
+  <div class="header-left">
+    <div class="logo">
+      <span class="logo-icon">◈</span>
+      <span class="logo-text">AgenceBoard</span>
+    </div>
+    <nav class="header-nav">
+      <button class="nav-btn active" data-view="board" onclick="switchView('board')">Board</button>
+      <button class="nav-btn" data-view="dashboard" onclick="switchView('dashboard')">Dashboard</button>
+      <button class="nav-btn" data-view="planning" onclick="switchView('planning')">Planning</button>
+    </nav>
+  </div>
+  <div class="header-right">
+    <div class="header-filters">
+      <select id="filter-client" onchange="applyFilters()">
+        <option value="">Tous les clients</option>
+        <option value="American Express">American Express</option>
+        <option value="AirPlus">AirPlus</option>
+        <option value="HRS">HRS</option>
+        <option value="AFTM">AFTM</option>
+      </select>
+      <select id="filter-type" onchange="applyFilters()">
+        <option value="">Tous les types</option>
+        <option value="Événement">Événement</option>
+        <option value="Réseaux sociaux">Réseaux sociaux</option>
+        <option value="Print / Digital">Print / Digital</option>
+      </select>
+    </div>
+    <button class="btn-add-card" onclick="openModal('new-task')">
+      <span>+</span> Nouvelle tâche
+    </button>
+  </div>
 </header>
-
-<main>
-  <div id="board"></div>
-</main>
-
-<!-- MODAL -->
-<div id="modal" class="modal">
-  <div class="modal-content">
-    <h2>Nouvelle tâche</h2>
-
-    <input id="task-title" placeholder="Titre"/>
-
-    <!-- ✅ CLIENT DYNAMIQUE -->
-    <select id="modal-client" onchange="handleClientSelect(this)">
-      <option value="">— Choisir —</option>
-    </select>
-
-    <button onclick="saveTask()">Enregistrer</button>
-    <button onclick="closeModal()">Fermer</button>
+ 
+<!-- ═══════════════ BOARD VIEW ═══════════════ -->
+<div id="view-board" class="view active">
+  <div class="board-title-bar">
+    <div class="board-info">
+      <h1 class="board-name">Projets Agence</h1>
+      <span class="board-meta" id="board-meta-count"></span>
+    </div>
+  </div>
+ 
+  <div class="board-scroll">
+    <div class="board-columns" id="board-columns">
+      <!-- Columns injected by JS -->
+    </div>
+    <button class="add-column-btn" onclick="addColumn()">
+      <span>+</span> Ajouter une liste
+    </button>
   </div>
 </div>
+ 
+<!-- ═══════════════ DASHBOARD VIEW ═══════════════ -->
+<div id="view-dashboard" class="view">
+  <div class="dashboard-wrap">
+    <h2 class="section-title">Vue d'ensemble</h2>
+ 
+    <div class="kpi-row">
+      <div class="kpi-card" style="--accent:#0079BF">
+        <div class="kpi-num" id="kpi-actifs">—</div>
+        <div class="kpi-label">Projets actifs</div>
+      </div>
+      <div class="kpi-card" style="--accent:#EB5A46">
+        <div class="kpi-num" id="kpi-retard">—</div>
+        <div class="kpi-label">Tâches en retard</div>
+      </div>
+      <div class="kpi-card" style="--accent:#FF9F19">
+        <div class="kpi-num" id="kpi-semaine">—</div>
+        <div class="kpi-label">Échéances cette semaine</div>
+      </div>
+      <div class="kpi-card" style="--accent:#61BD4F">
+        <div class="kpi-num" id="kpi-termine">—</div>
+        <div class="kpi-label">Tâches terminées</div>
+      </div>
+    </div>
+ 
+    <div class="dash-grid">
+      <div class="dash-panel">
+        <h3 class="panel-title">🔴 Tâches en retard</h3>
+        <div id="dash-retard" class="dash-list"></div>
+      </div>
+      <div class="dash-panel">
+        <h3 class="panel-title">🟠 À venir (7 jours)</h3>
+        <div id="dash-semaine" class="dash-list"></div>
+      </div>
+      <div class="dash-panel">
+        <h3 class="panel-title">📊 Projets par client</h3>
+        <div id="dash-clients" class="dash-list"></div>
+      </div>
+      <div class="dash-panel">
+        <h3 class="panel-title">📋 Répartition par statut</h3>
+        <div id="dash-statuts" class="dash-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+ 
+<!-- ═══════════════ PLANNING VIEW ═══════════════ -->
+<div id="view-planning" class="view">
+  <div class="planning-wrap">
+    <h2 class="section-title">Planning des tâches</h2>
+    <div class="planning-table-wrap">
+      <table class="planning-table" id="planning-table">
+        <thead>
+          <tr>
+            <th>Projet</th>
+            <th>Client</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Échéance</th>
+            <th>Statut</th>
+            <th>Priorité</th>
+          </tr>
+        </thead>
+        <tbody id="planning-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+ 
+<!-- ═══════════════ MODAL TÂCHE ═══════════════ -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal()"></div>
+<div class="modal" id="task-modal">
+  <div class="modal-header">
+    <div class="modal-header-left">
+      <span class="modal-icon">☰</span>
+      <input class="modal-title-input" id="modal-title" type="text" placeholder="Titre de la tâche..." />
+    </div>
+    <button class="modal-close" onclick="closeModal()">✕</button>
+  </div>
+ 
+  <div class="modal-body">
+    <div class="modal-col-main">
+      <div class="modal-field">
+        <label>Description</label>
+        <textarea id="modal-desc" rows="3" placeholder="Ajouter une description..."></textarea>
+      </div>
+      <div class="modal-field">
+        <label>Commentaire</label>
+        <textarea id="modal-comment" rows="2" placeholder="Commentaire interne..."></textarea>
+      </div>
+    </div>
+ 
+    <div class="modal-col-side">
+      <div class="modal-field">
+        <label>Client</label>
+        <select id="modal-client">
+          <option value="">— Choisir —</option>
+          <option>
+            <input type="text" id="monTexte" placeholder="Écris ton texte">
+            <button onclick="ajouter()">Ajouter</button>
 
+            <select id="menu"></select>
+
+            <script>
+            function ajouter() {
+              let texte = document.getElementById("monTexte").value;
+
+              let option = document.createElement("option");
+              option.text = texte;
+              option.value = texte;
+
+              document.getElementById("menu").appendChild(option);
+            }
+            </script>
+          </option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label>Projet associé</label>
+        <select id="modal-project">
+          <option value="">— Choisir —</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label>Type de tâche</label>
+        <select id="modal-type">
+          <option>Devis</option>
+          <option>Publication RS</option>
+          <option>Création</option>
+          <option>Planification</option>
+          <option>Réunion</option>
+          <option>Relance</option>
+          <option>Rédaction</option>
+          <option>Autre</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label>Statut</label>
+        <select id="modal-status">
+          <option>À faire</option>
+          <option>En cours</option>
+          <option>Attente retour client</option>
+          <option>Attente retour tiers</option>
+          <option>Devis envoyé</option>
+          <option>À relancer</option>
+          <option>Bloqué</option>
+          <option>Terminé</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label>Priorité</label>
+        <select id="modal-priority">
+          <option>Haute</option>
+          <option>Normale</option>
+          <option>Basse</option>
+          <option>Non définie</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label>Date d'échéance</label>
+        <input type="date" id="modal-due" />
+      </div>
+ 
+      <div class="modal-actions">
+        <button class="btn-save" onclick="saveTask()">Enregistrer</button>
+        <button class="btn-delete" id="modal-delete-btn" onclick="deleteTask()" style="display:none">Supprimer</button>
+      </div>
+    </div>
+  </div>
+</div>
+ 
+<!-- ═══════════════ MODAL PROJET ═══════════════ -->
+<div class="modal" id="project-modal" style="max-width:460px">
+  <div class="modal-header">
+    <div class="modal-header-left">
+      <span class="modal-icon">◈</span>
+      <input class="modal-title-input" id="proj-title" type="text" placeholder="Nom du projet..." />
+    </div>
+    <button class="modal-close" onclick="closeModal()">✕</button>
+  </div>
+  <div class="modal-body" style="flex-direction:column;gap:12px">
+    <div class="modal-field">
+      <label>Client</label>
+      <select id="proj-client">
+        <option value="">— Choisir —</option>
+        <option>American Express</option>
+        <option>AirPlus</option>
+        <option>HRS</option>
+        <option>AFTM</option>
+      </select>
+    </div>
+    <div class="modal-field">
+      <label>Type de projet</label>
+      <select id="proj-type">
+        <option>Événement</option>
+        <option>Réseaux sociaux</option>
+        <option>Print / Digital</option>
+      </select>
+    </div>
+    <div class="modal-field">
+      <label>Date de livraison</label>
+      <input type="date" id="proj-due" />
+    </div>
+    <div class="modal-field">
+      <label>Notes</label>
+      <textarea id="proj-notes" rows="2" placeholder="Notes..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-save" onclick="saveProject()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+ 
 <script src="app.js"></script>
 </body>
 </html>
+ 
